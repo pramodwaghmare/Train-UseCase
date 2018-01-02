@@ -1,0 +1,38 @@
+1)mysql
+
+
+mysql -u root -p
+
+create database assignment;
+
+use  assignment;
+
+############# FROM FILE TO SQL WITH DIRTY RECORDS ############
+
+create table TRAIND (trno varchar(10),trtime varchar(10),trspeed varchar(10),trdir varchar(10)); 
+
+
+
+load data local infile '/home/cloudera/Downloads/train_data.txt' ignore into table TRAIND fields terminated by '|' lines terminated by '\n';  
+
+
+select * from TRAIND;
+
+2)sqoop
+
+sudo -su  hdfs hdfs dfs -mkdir /TDATA
+
+
+
+sudo -su  hdfs hdfs dfs -chown cloudera /TDATA
+
+############# FOR PIG ############
+
+sqoop import --connect "jdbc:mysql://localhost/assignment" --username root --password cloudera --table TRAIND --target-dir /TDATA/T1 -m 1
+
+############# FOR HIVE ############
+
+
+sqoop import --connect "jdbc:mysql://localhost/assignment" --username root --password cloudera  --columns trno,trtime,trspeed,trdir --table TRAIND --target-dir /TDATA/T2 -m 1 --hive-import --fields-terminated-by "," --hive-import --create-hive-table --hive-table TRAINDATA
+
+

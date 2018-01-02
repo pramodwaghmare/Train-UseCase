@@ -1,0 +1,45 @@
+5)If​ ​ you​ ​ receive​ ​ some​ ​ data​ ​ that​ ​ is​ ​ incorrect​ ​ in​ ​ input​ ​ file,​ ​ add additional​ ​ code​ ​ to​ ​ handle​
+
+###### CREATED NEW TABLE TO REPLACE DIRTY RECORD WITH NULL ########
+
+CREATE TABLE IF NOT EXISTS TRAINDATA_FILTER ( trno int, trtime String,
+trspeed int, trdir String)
+COMMENT 'train details'
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE;
+
+insert into traindata_filter select cast(trno as double),trtime,cast (trspeed as double),trdir from traindata ;
+
+###### CREATED NEW TABLE TO REMOVE NULL RECORDS ########
+
+CREATE TABLE IF NOT EXISTS TRAINDATA_FINAL ( trno int, trtime String,
+trspeed int, trdir String)
+COMMENT 'train details'
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE;
+
+
+insert into traindata_final select trno,substring(train_time,0,3),trspeed,trdir from traindata_filter where trno is not null;
+
+1)Total​ ​ how​ ​ many​ ​ train​ ​ data​ ​ in​ ​ present​ ​ in​ ​ the​ ​ input​ ​ data.
+
+select count(*) from TRAINDATA_FINAL;
+
+
+2)How​ ​ many​ ​ trains​ ​ are​ ​ travelling​ ​ from​ ​ this​ ​ station​ ​ in​ ​ each​ ​ hour
+
+select trtime,count(*) from TRAINDATA_FINAL  group by trtime;
+
+
+3)How​ ​ many​ ​ trains​ ​ are​ ​ travelling​ ​ in​ ​ each​ ​ direction​ ​ in​ ​ each​ ​ hour
+
+select trdir,trtime,count(*) from TRAINDATA_FINAL  group by trdir,trtime;
+
+
+4)What​ ​ is​ ​ the​ ​ avg​ ​ speed​ ​ of​ ​ each​ ​ train​ ​ travelling​ ​ in​ ​ each​ ​ direction in​ ​ each​ ​ hour
+
+select trno,trdir,avg(trspeed) from TRAINDATA_FINAL  group by trno,trdir,trtime;
