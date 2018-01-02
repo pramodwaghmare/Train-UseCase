@@ -33,5 +33,5 @@ additional code to handle that inside your mapper / reducer
 
 
 
-Same Assignment is done in PIG & HIVE using SQOOP by dumpin data in mysql
+Same Assignment is done in PIG & HIVE using SQOOP by dumping data in mysql
 
